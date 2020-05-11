@@ -1,8 +1,7 @@
-import constants;
 import random;
 
 class fogNode:
-    def __init__(self, myahk):
+    def __init__(self):
         self.FK = random.randint(10000000000, 25000000000)      # CPU Power in hz
         self.BK = random.randint(16000000000, 32000000000)      # memory in range 2GB - 4GB in bits
         self.WK = random.randint(40000000, 200000000)           # bandwidth in bits/s  
