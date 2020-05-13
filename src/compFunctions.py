@@ -111,3 +111,10 @@ def computeEnergyOverheads(userList, u, curNodeList, puks, ruks):
         lista.append(EO);
         
     return np.array(lista);
+
+def addIUS(userList):
+    sumI = 0;
+    for user in userList:
+        sumI += user.ongoingTask[0];
+    
+    return sumI;
