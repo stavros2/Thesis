@@ -118,3 +118,18 @@ def addIUS(userList):
         sumI += user.ongoingTask[0];
     
     return sumI;
+
+def randomVector(size):
+    lista = [];
+    for i in range(size):
+        lista.append(random.random());
+    
+    return np.array(lista);
+
+def RQ(y, x):
+    if x == 1:
+        return 2 * y - pow(y, 2);
+    elif x == 0:
+        return 1 - pow(y,2);
+
+        

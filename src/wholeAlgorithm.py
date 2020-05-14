@@ -1,10 +1,16 @@
 import compFunctions
 import constants
 import SLA
+import RBTS
+import BayesianBelief
     
 if __name__ == "__main__":
     distances = compFunctions.generateDistances(10, 400, constants.NODES, constants.USERS);
     nodes, users = compFunctions.initalize(constants.NODES, constants.USERS);
+    
+    print("Initial Reputations");
+    for node in nodes:
+        print(node.__dict__)
     puks = compFunctions.computePUK(distances, constants.NODES, constants.THETA1);
     guks = compFunctions.computeGUK(distances, constants.THETA2);
     currentNodes = compFunctions.firstRound(constants.NODES, constants.USERS)
@@ -16,7 +22,29 @@ if __name__ == "__main__":
     
     
     sla = SLA.SLA(nodes, users, currentNodes, userEnergyOverheads, userTimeOverheads, fuks);
-    newRoundNodes = sla.newRound();
+    newRoundNodes, probabilities = sla.newRound();
+    
+    
+    """print("New round");
+    print(newRoundNodes);
+    print("Reports")
+    print(probabilities)"""
+    
+    rbts = RBTS.RBTS(nodes, users, newRoundNodes, probabilities);
+    answers = rbts.finalAnswers()
+    
+    believes = BayesianBelief.BayesianBelief(nodes, answers);
+    believes.updateReputations();
+
+    
+    print("New Reputations")
+    for node in nodes:
+        print(node.__dict__);
+    
+    
+    
+    """print("Would most of the users wish to change fogNode?");
+    print(answers)
     
     print("Nodes");
     for node in nodes:
@@ -30,7 +58,7 @@ if __name__ == "__main__":
     print(puks);
     print("GUKS")
     print(guks);
-    print("o kathensa en dame");
+    print("o kathenas en dame");
     print(currentNodes);
     print("RUKS")
     print(ruks)
@@ -48,3 +76,8 @@ if __name__ == "__main__":
     
     print("SLA")
     print(sla.__dict__)
+    
+    print("RBTS")
+    print(rbts.__dict__);
+    """
+    

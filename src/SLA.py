@@ -66,7 +66,8 @@ class SLA:
         None
     
     def newRound(self):
+        # Needs implementation of actual SLA ITerations
         lista = [];
         for i in range(constants.USERS):
             lista.append(random.randrange(constants.NODES));
-        return lista;
+        return lista, compFunctions.randomVector(constants.USERS);

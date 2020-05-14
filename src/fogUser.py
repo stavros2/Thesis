@@ -11,6 +11,7 @@ class fogUser:
         self.initProbs(k);
         
     def initTask(self):
+        #Initializing the tuple of ongoing task
         appBits = random.randint(80000000, 320000000)
         appIP = random.randint(1000000, 20000000)
         appCPUCycles = random.randint(1000000000, 10000000000)
