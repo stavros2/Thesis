@@ -19,23 +19,21 @@ if __name__ == "__main__":
     fuks = compFunctions.computeFUK(nodes, users, currentNodes, constants.NODES, constants.USERS);
     userTimeOverheads = compFunctions.computeTimeOverheads(users, ruks, fuks);
     userEnergyOverheads = compFunctions.computeEnergyOverheads(users, constants.USERS, currentNodes, puks, ruks)
-    
-    
+   
     sla = SLA.SLA(nodes, users, currentNodes, userEnergyOverheads, userTimeOverheads, fuks);
-    newRoundNodes, probabilities = sla.newRound();
-    
-    
+    newRoundNodes, probabilities = sla.newRound2();
+        
+        
     """print("New round");
-    print(newRoundNodes);
-    print("Reports")
-    print(probabilities)"""
-    
+        print(newRoundNodes);
+        print("Reports")
+        print(probabilities)"""
+        
     rbts = RBTS.RBTS(nodes, users, newRoundNodes, probabilities);
     answers = rbts.finalAnswers()
-    
+        
     believes = BayesianBelief.BayesianBelief(nodes, answers);
     believes.updateReputations();
-
     
     print("New Reputations")
     for node in nodes:

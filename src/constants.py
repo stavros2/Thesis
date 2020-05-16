@@ -4,4 +4,4 @@ THETA1 = 0.75;
 THETA2 = 0.5;
 G0 = 2;
 TIMESLOTDURATION = 10;
-b = 0.001
+beta = 1

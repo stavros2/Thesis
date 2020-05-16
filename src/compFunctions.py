@@ -131,5 +131,3 @@ def RQ(y, x):
         return 2 * y - pow(y, 2);
     elif x == 0:
         return 1 - pow(y,2);
-
-        
