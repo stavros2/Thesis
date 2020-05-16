@@ -14,11 +14,11 @@ class SLA:
         self.tOver = timeOverheads;
         self.fuks = fuk;
         
-    def computeUGGP(self):
+    def computeUGGP(self, assignment):
         lista = []
         for i in range(self.k):
             nodeSum = 0;
-            usersOnNode = compFunctions.indices(self.assignment, i);
+            usersOnNode = compFunctions.indices(assignment, i);
             onNode = len(usersOnNode);
             for userIndex in usersOnNode:
                 nodeSum += self.tOver[userIndex] / constants.TIMESLOTDURATION;
@@ -30,23 +30,23 @@ class SLA:
         
         return np.array(lista);
     
-    def computeCongs(self):
+    def computeCongs(self, assignment):
         lista = [];
         totalItus = compFunctions.addIUS(self.users);
         for i in range(self.k):
             nodeISum = 0;
-            usersOnNode = compFunctions.indices(self.assignment, i);
+            usersOnNode = compFunctions.indices(assignment, i);
             for userIndex in usersOnNode:
                 nodeISum += self.users[userIndex].ongoingTask[0];
             lista.append(nodeISum / totalItus);
             
         return np.array(lista);
     
-    def computeRFKs(self):
+    def computeRFKs(self, assignment):
         lista = []
         for i in range(self.k):
             perNode = 0;
-            usersOnNode = compFunctions.indices(self.assignment, i);
+            usersOnNode = compFunctions.indices(assignment, i);
             onNode = len(usersOnNode);
             for userIndex in usersOnNode:
                 perNode += self.fuks[userIndex];
@@ -61,14 +61,14 @@ class SLA:
         
         return array;
     
-    def computeRewards(self):
-        UGGP = self.computeUGGP();
-        congs = self.computeCongs();
-        RFKs = self.computeRFKs();
+    def computeRewards(self, assignment):
+        UGGP = self.computeUGGP(assignment);
+        congs = self.computeCongs(assignment);
+        RFKs = self.computeRFKs(assignment);
         lista = [];
         totalRewards = 0;
         for i in range (self.u):
-            nodeIndex = self.assignment[i]
+            nodeIndex = assignment[i]
             userReward = self.nodes[nodeIndex].reputation * RFKs[nodeIndex];
             userReward /= UGGP[nodeIndex] * congs[nodeIndex];
             totalRewards += userReward;
@@ -81,7 +81,7 @@ class SLA:
         
             
     def iteration(self, assignment, maxReward):
-        rewards, normalizedRewards = self.computeRewards();
+        rewards, normalizedRewards = self.computeRewards(assignment);
         for i in range(self.u):
             self.users[i].updateProbs(assignment[i], normalizedRewards[i]);
             if maxReward[i] < normalizedRewards[i]:

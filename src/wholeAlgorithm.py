@@ -20,20 +20,27 @@ if __name__ == "__main__":
     userTimeOverheads = compFunctions.computeTimeOverheads(users, ruks, fuks);
     userEnergyOverheads = compFunctions.computeEnergyOverheads(users, constants.USERS, currentNodes, puks, ruks)
    
-    sla = SLA.SLA(nodes, users, currentNodes, userEnergyOverheads, userTimeOverheads, fuks);
-    newRoundNodes, probabilities = sla.newRound2();
-        
-        
-    """print("New round");
-        print(newRoundNodes);
-        print("Reports")
-        print(probabilities)"""
-        
-    rbts = RBTS.RBTS(nodes, users, newRoundNodes, probabilities);
-    answers = rbts.finalAnswers()
-        
-    believes = BayesianBelief.BayesianBelief(nodes, answers);
-    believes.updateReputations();
+    i = 0;
+    while i < 10:
+        sla = SLA.SLA(nodes, users, currentNodes, userEnergyOverheads, userTimeOverheads, fuks);
+        currentNodes, probabilities = sla.newRound2();
+            
+        print(i)
+            
+        """print("New round");
+            print(newRoundNodes);
+            print("Reports")
+            print(probabilities)"""
+            
+        rbts = RBTS.RBTS(nodes, users, currentNodes, probabilities);
+        answers = rbts.finalAnswers()
+            
+        believes = BayesianBelief.BayesianBelief(nodes, answers);
+        believes.updateReputations();
+        i += 1;
+        for user in users:
+            user.initProbs(constants.NODES);
+            user.initTask();
     
     print("New Reputations")
     for node in nodes:
