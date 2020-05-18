@@ -5,6 +5,7 @@ import random
 
 class SLA:
     def __init__(self, nodeList, userList, curNodeList, energyOverheads, timeOverheads, fuk):
+        # initializing the SLA object with the needed lists. 
         self.nodes = nodeList;
         self.k = len(nodeList)
         self.users = userList;
@@ -15,6 +16,7 @@ class SLA:
         self.fuks = fuk;
         
     def computeUGGP(self, assignment):
+        # computing the UGGP values, according to the formulas
         lista = []
         for i in range(self.k):
             nodeSum = 0;
@@ -31,6 +33,7 @@ class SLA:
         return np.array(lista);
     
     def computeCongs(self, assignment):
+        # computing the Conegstion (on each node) values, according to the formulas
         lista = [];
         totalItus = compFunctions.addIUS(self.users);
         for i in range(self.k):
@@ -43,6 +46,7 @@ class SLA:
         return np.array(lista);
     
     def computeRFKs(self, assignment):
+        # computing the Reputation Factor (used in the reward calculation below)
         lista = []
         for i in range(self.k):
             perNode = 0;
@@ -62,6 +66,7 @@ class SLA:
         return array;
     
     def computeRewards(self, assignment):
+        # computing the reward each node gives to its paired users
         UGGP = self.computeUGGP(assignment);
         congs = self.computeCongs(assignment);
         RFKs = self.computeRFKs(assignment);
@@ -69,8 +74,7 @@ class SLA:
         totalRewards = 0;
         for i in range (self.u):
             nodeIndex = assignment[i]
-            userReward = self.nodes[nodeIndex].reputation * RFKs[nodeIndex];
-            userReward /= UGGP[nodeIndex] * congs[nodeIndex];
+            userReward = self.nodes[nodeIndex].reputation * RFKs[nodeIndex] / (UGGP[nodeIndex] * congs[nodeIndex]);
             totalRewards += userReward;
             lista.append(userReward);
             
@@ -81,6 +85,7 @@ class SLA:
         
             
     def iteration(self, assignment, maxReward):
+        # an iteration of the SLA algorithm. We keep the maxRewards
         rewards, normalizedRewards = self.computeRewards(assignment);
         for i in range(self.u):
             self.users[i].updateProbs(assignment[i], normalizedRewards[i]);
@@ -89,6 +94,11 @@ class SLA:
         return normalizedRewards;
         
     def newRound2(self):
+        # the actual SLA. Computes the pairings between nodes and users. Also
+        # returns a probability for each node (the reward each user got by selecting
+        # the last node / the max Reward it received at some point during the SLA).
+        # This probability value is used directly as the prediction report for the
+        # RBTS
         checkList = [False] * self.u
         newAssignment = self.assignment;
         maxReward = np.array([0.0000000001] * self.u);
@@ -103,7 +113,7 @@ class SLA:
         return newAssignment, probabilities;
     
     def newRound(self):
-        # Needs implementation of actual SLA ITerations
+        # Dummy SLA. Returns 2 random lists, one for pairing nodes and users and one for prediction reports. 
         lista = [];
         for i in range(self.u):
             lista.append(random.randrange(self.k));

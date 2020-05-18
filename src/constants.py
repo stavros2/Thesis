@@ -1,5 +1,5 @@
 NODES = 10;
-USERS = 60;
+USERS = 30;
 THETA1 = 0.75;
 THETA2 = 0.5;
 G0 = 2;

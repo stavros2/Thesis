@@ -4,6 +4,8 @@ import compFunctions
 
 class RBTS:
     def __init__(self, nodeList, userList, curNodeList, probs):
+        # initializing the RBTS object with the needed lists. 
+
         self.nodes = nodeList;
         self.users = userList;
         self.assignement = curNodeList;
@@ -12,9 +14,11 @@ class RBTS:
         
     
     def createReports(self):
+        # using the probabilities (used as prediction reports) we create the information reports
         lista = [];
         for i in range(len(self.users)):
             temp = random.random();
+
             if temp > self.predictionReports[i]:
                 lista.append(1)
             else:
@@ -23,6 +27,7 @@ class RBTS:
         return lista;
     
     def getPeersRefs(self):
+        # calculating the peers and reference nodes for each node
         references = []
         peers = []
         for i in range(len(self.users)):
@@ -36,6 +41,7 @@ class RBTS:
         return references, peers;
     
     def calculateYu(self, refsList):
+        # calculating the yu for each node
         lista = []
         for i in range(len(self.users)):
             refNode = refsList[i];
@@ -48,6 +54,7 @@ class RBTS:
         return np.array(lista);
     
     def scoring(self):
+        # calculating the score each user gets in accordance with his report
         refs, peers = self.getPeersRefs();
         yu = self.calculateYu(refs);
         lista = []
@@ -58,6 +65,7 @@ class RBTS:
         return np.array(lista);
     
     def finalAnswers(self):
+        # in accordance to the user reports we conclude if the node is "good" or "bad" during the round
         lista = []
         scores = self.scoring();
         for i in range(len(self.nodes)):

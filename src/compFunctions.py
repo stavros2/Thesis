@@ -4,6 +4,8 @@ import random
 import constants
 import numpy as np
 
+### A MODULE CONTAINING SOME USEFUL FUNCTIONS USED IN VARIOUS ASPECTS THE SYSTEM ###
+
 def initalize(k, u):
     # initalizing 2 lists. One of k fogNodes and one of u fogUsers
     nodes = [];
@@ -55,10 +57,12 @@ def firstRound(k, u):
     return lista;
 
 def indices(lista, element):
+    # given a list @lista and an element @element, return a list of all the indices in which @element occurs
     return [index for index, value in enumerate(lista) if value == element]
 
 
 def computeRUK(nodeList, puks, guks, curNodeList, k, u):
+    # computing the RUK values
     lista = [];
     pinakas = np.zeros((k,u));
     for i in range(u):
@@ -77,6 +81,7 @@ def computeRUK(nodeList, puks, guks, curNodeList, k, u):
     return np.array(lista), pinakas;
 
 def computeFUK(nodeList, userList, curNodeList, k, u):
+    # computing the FUK values
     lista = [];
     for i in range(u):
         nodeIndex = curNodeList[i];
@@ -96,6 +101,7 @@ def computeFUK(nodeList, userList, curNodeList, k, u):
 
 
 def computeTimeOverheads(userList, ruks, fuks):
+    # computing time overheads. ie time to transmit the task
     lista = [];
     for i in range(len(userList)):
         overhead = userList[i].ongoingTask[0] / ruks[i] + userList[i].ongoingTask[2] / fuks[i]   
@@ -104,6 +110,7 @@ def computeTimeOverheads(userList, ruks, fuks):
     return np.array(lista);
 
 def computeEnergyOverheads(userList, u, curNodeList, puks, ruks):
+    # compute the energy overheads ie. the amount of power we spend to complete the task
     lista = [];
     for i in range(u):
         nodeIndex = curNodeList[i];
@@ -113,6 +120,7 @@ def computeEnergyOverheads(userList, u, curNodeList, puks, ruks):
     return np.array(lista);
 
 def addIUS(userList):
+    # return the sum of all Itus from a list of users
     sumI = 0;
     for user in userList:
         sumI += user.ongoingTask[0];
@@ -120,6 +128,7 @@ def addIUS(userList):
     return sumI;
 
 def randomVector(size):
+    # returns a vector of size @size with random numbers
     lista = [];
     for i in range(size):
         lista.append(random.random());
@@ -127,6 +136,7 @@ def randomVector(size):
     return np.array(lista);
 
 def RQ(y, x):
+    # the RQ functions as described in the WriteUp
     if x == 1:
         return 2 * y - pow(y, 2);
     elif x == 0:
