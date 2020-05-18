@@ -48,6 +48,6 @@ class fogUser:
         # updating the probabilties in accordance to the node we chose and the reward we got
         for i in range(self.noNodes):
             if i == curNode:
-                self.probVector[i] = self.probVector[i] + constants.beta * reward * (1 - self.probVector[i]);
+                self.probVector[i] = self.probVector[i] + constants.BETA * reward * (1 - self.probVector[i]);
             else:
-                self.probVector[i] = self.probVector[i] - constants.beta * reward * self.probVector[i];
+                self.probVector[i] = self.probVector[i] - constants.BETA * reward * self.probVector[i];
