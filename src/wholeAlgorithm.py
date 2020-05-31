@@ -14,15 +14,16 @@ if __name__ == "__main__":
     puks = compFunctions.computePUK(distances, constants.NODES, constants.THETA1);
     guks = compFunctions.computeGUK(distances, constants.THETA2);
     currentNodes = compFunctions.firstRound(constants.NODES, constants.USERS)
-    
-    ruks, ruksArray = compFunctions.computeRUK(nodes, puks, guks, currentNodes, constants.NODES, constants.USERS);
-    fuks = compFunctions.computeFUK(nodes, users, currentNodes, constants.NODES, constants.USERS);
-    
-   
+
     i = 0;
-    while i < 10:
+    while i < 5:
+        
+        ruks= compFunctions.computeRUK(nodes, puks, guks, currentNodes, constants.NODES, constants.USERS);
+        fuks = compFunctions.computeFUK(nodes, users, currentNodes, constants.NODES, constants.USERS);
+
         userTimeOverheads = compFunctions.computeTimeOverheads(users, ruks, fuks);
         userEnergyOverheads = compFunctions.computeEnergyOverheads(users, constants.USERS, currentNodes, puks, ruks)
+        
         sla = SLA.SLA(nodes, users, currentNodes, userEnergyOverheads, userTimeOverheads, fuks);
         currentNodes, probabilities = sla.newRound2();
             
@@ -34,8 +35,7 @@ if __name__ == "__main__":
         believes.updateReputations();
         i += 1;
         for user in users:
-            user.initProbs(constants.NODES);
-            user.initTask();
+            user.renew();
     
     print("New Reputations")
     for node in nodes:

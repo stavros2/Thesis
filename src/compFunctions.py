@@ -64,7 +64,6 @@ def indices(lista, element):
 def computeRUK(nodeList, puks, guks, curNodeList, k, u):
     # computing the RUK values
     lista = [];
-    pinakas = np.zeros((k,u));
     for i in range(u):
         nodeIndex = curNodeList[i];
         node = nodeList[nodeIndex];
@@ -76,9 +75,8 @@ def computeRUK(nodeList, puks, guks, curNodeList, k, u):
         toLog = 1 + (puks[nodeIndex][i] * guks[nodeIndex][i]) / (constants.G0 + mysum) 
         ruk = node.WK * np.log2(toLog)
         lista.append(ruk);
-        pinakas[nodeIndex][i] = ruk
     
-    return np.array(lista), pinakas;
+    return np.array(lista);
 
 def computeFUK(nodeList, userList, curNodeList, k, u):
     # computing the FUK values

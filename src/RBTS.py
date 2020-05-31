@@ -1,30 +1,33 @@
-import random
 import numpy as np
 import compFunctions
+import random;
 
 class RBTS:
-    def __init__(self, nodeList, userList, curNodeList, probs):
+    def __init__(self, nodeList, userList, curNodeList, predReports, infReports = []):
         # initializing the RBTS object with the needed lists. 
 
         self.nodes = nodeList;
         self.users = userList;
         self.assignement = curNodeList;
-        self.predictionReports = probs;
-        self.informationReports = self.createReports();
-        
+        self.predictionReports = predReports;
+        if infReports == []:
+            self.informationReports = self.createReports(predReports);
+        else:
+            self.informationReports = infReports;
     
-    def createReports(self):
+    def createReports(self, probs):
         # using the probabilities (used as prediction reports) we create the information reports
         lista = [];
         for i in range(len(self.users)):
             temp = random.random();
 
-            if temp > self.predictionReports[i]:
+            if temp < probs[i]:
                 lista.append(1)
             else:
                 lista.append(0);
         
         return lista;
+        
     
     def getPeersRefs(self):
         # calculating the peers and reference nodes for each node
@@ -58,16 +61,23 @@ class RBTS:
         refs, peers = self.getPeersRefs();
         yu = self.calculateYu(refs);
         lista = []
+        infScores = [];
+        predScores = []
         for i in range(len(self.users)):
             xk = self.informationReports[peers[i]]
-            lista.append(compFunctions.RQ(yu[i], xk) + compFunctions.RQ(self.predictionReports[i], xk))
-        
-        return np.array(lista);
+            informationScore = compFunctions.RQ(yu[i], xk);
+            predictionScore = compFunctions.RQ(self.predictionReports[i], xk);
+            
+            lista.append(predictionScore + informationScore)
+            infScores.append(informationScore)
+            predScores.append(predictionScore);
+            
+        return np.array(lista), np.array(infScores), np.array(predScores);
     
     def finalAnswers(self):
         # in accordance to the user reports we conclude if the node is "good" or "bad" during the round
         lista = []
-        scores = self.scoring();
+        scores, infScores, predScores = self.scoring();
         for i in range(len(self.nodes)):
             sumYes, sumNo, noNo, noYes, yesScore, noScore = 0, 0, 0, 0, 0, 0
             usersOnNode = compFunctions.indices(self.assignement, i)
@@ -92,5 +102,5 @@ class RBTS:
                 lista.append(1);
             else:
                 lista.append(0);
-        
+
         return lista;

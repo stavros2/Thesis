@@ -70,11 +70,17 @@ class SLA:
         UGGP = self.computeUGGP(assignment);
         congs = self.computeCongs(assignment);
         RFKs = self.computeRFKs(assignment);
+        nodeRewards = np.zeros(self.k);
         lista = [];
         totalRewards = 0;
+        for i in range(self.k):
+            if UGGP[i] == 0 or congs[i] == 0:
+                nodeRewards[i]  = 0;
+            else:
+                nodeRewards[i] = self.nodes[i].reputation * RFKs[i] / (UGGP[i] * congs[i]);
+        
         for i in range (self.u):
-            nodeIndex = assignment[i]
-            userReward = self.nodes[nodeIndex].reputation * RFKs[nodeIndex] / (UGGP[nodeIndex] * congs[nodeIndex]);
+            userReward = nodeRewards[assignment[i]]
             totalRewards += userReward;
             lista.append(userReward);
             

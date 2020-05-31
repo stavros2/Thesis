@@ -8,15 +8,15 @@ class fogUser:
         self.ongoingTask = (0, 0, 0);
         self.probVector = np.ones(k);
         self.noNodes = k;
-        self.eu = random.randint(0, 100000000000000)
+        self.eu = random.randint(100, 10000)
         self.initTask();
         self.initProbs(k);
         
     def initTask(self):
         #Initializing the tuple of ongoing task
-        appBits = random.randint(80000000, 320000000)
-        appIP = random.randint(1000000, 20000000)
-        appCPUCycles = random.randint(1000000000, 10000000000)
+        appBits = random.randint(50000000, 150000000)
+        appCPUCycles = random.randint(1000000000, 2000000000)
+        appIP = appCPUCycles / appBits;
         self.ongoingTask = (appBits, appIP, appCPUCycles);
         
     def initProbs(self, k):
@@ -41,7 +41,12 @@ class fogUser:
             temp -= self.probVector[i];
             i += 1;
             
-        return i
+        return i;
+    
+    def renew(self):
+        # reinitializing both the probability vector and the task for a new round 
+        self.initProbs(self.noNodes);
+        self.initTask();
     
     
     def updateProbs(self, curNode, reward):
