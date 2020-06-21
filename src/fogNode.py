@@ -2,10 +2,12 @@ import random
 import constants
 
 class fogNode:
-    def __init__(self):
+    def __init__(self, i):
         # initializing the fogNode object. We store values such as reputation and some values used in RBTS
-        self.FK = random.randint(10000000000, 20000000000)           # CPU Power in hz
-        self.BK = random.randint(37500000000, 375000000000)          # memory enough for every user to associate with this node
+       # self.FK = random.randint(10000000000, 20000000000)           # CPU Power in hz
+        self.FK = 10000000000 + i * 3333333333.3333335;
+        #self.BK = random.randint(37500000000, 375000000000)          # memory enough for every user to associate with this node
+        self.BK = 37500000000 + i * 112500000000;
         self.WK = constants.BANDWIDTH             # bandwidth in bits/s  
         self.noNo = 0;
         self.noYes = 0;

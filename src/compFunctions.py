@@ -11,7 +11,7 @@ def initalize(k, u):
     nodes = [];
     users = [];
     for i in range(k):
-        temp = fogNode.fogNode();
+        temp = fogNode.fogNode(i);
         nodes.append(temp)
     for i in range(u):
         temp = fogUser.fogUser(k);
@@ -78,9 +78,15 @@ def computeRUK(nodeList, puks, guks, curNodeList, k, u):
     
     return np.array(lista);
 
-def computeFUK(nodeList, userList, curNodeList, k, u):
+def computeFUK(nodeList, userList, curNodeList, k, u, RBTSScores):
     # computing the FUK values
     lista = [];
+    accScore = sum(RBTSScores);
+    if accScore == 0:
+        factors = np.ones(u);
+    else:
+        factors = RBTSScores / accScore;
+        
     for i in range(u):
         nodeIndex = curNodeList[i];
         node = nodeList[nodeIndex];
@@ -92,7 +98,9 @@ def computeFUK(nodeList, userList, curNodeList, k, u):
             iotaSum += userList[user].ongoingTask[0];
         fuk = userList[i].ongoingTask[1] / phiSum 
         fuk *= 1 - iotaSum / node.BK;
-        fuk *= node.FK
+        fuk *= node.FK;
+        fuk *= factors[i];
+        
         lista.append(fuk)
    
     return np.array(lista);
@@ -139,3 +147,22 @@ def RQ(y, x):
         return 2 * y - pow(y, 2);
     elif x == 0:
         return 1 - pow(y,2);
+    
+    
+def rewardsRange(normalizedRewards, newMax, newMin):
+    lista = [];
+    size = len(normalizedRewards);
+    
+    oldMax = max(normalizedRewards);
+    oldMin = min(normalizedRewards);
+    
+    newRange = newMax - newMin;
+    oldRange = oldMax - oldMin;
+    
+    if oldRange == 0:
+        return np.ones(size) * (newMax + newMin) / 2
+    
+    for reward in normalizedRewards:
+        lista.append((((reward - oldMin) * newRange)/ oldRange) + newMin)
+        
+    return np.array(lista)

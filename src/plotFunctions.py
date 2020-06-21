@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import constants
 import numpy as np
 from statistics import mean
+from scipy.signal import savgol_filter
+
 
 
 def plotNodeCharacteristics(nodeList):
@@ -29,7 +31,7 @@ def plotNodeCharacteristics(nodeList):
 def plotUsersOnNode(array):
     plot = plt.figure();
     plt.title("Number of users on each node over time");
-    plt.xlabel("SLA Iterations(x100)");
+    plt.xlabel("SLA Iterations");
     plt.ylabel("Number of User");
     for i in range(len(array)):
         thisLine = array[i];
@@ -61,7 +63,7 @@ def plotUserReward(array):
     plot = plt.figure();
     plt.plot(range(len(array)), array)
     plt.title("Reward over time for user 0")
-    plt.xlabel("SLA Iterations(x100)");
+    plt.xlabel("SLA Iterations");
     plt.ylabel("Normalized Reward");
     plt.show();
     
@@ -78,7 +80,7 @@ def plotNodeRewards(array):
         
         
     plt.legend();
-    plt.xlabel("SLA Iterations(x100)");
+    plt.xlabel("SLA Iterations");
     plt.ylabel("Normalized Reward");
     plt.show();
     
@@ -86,7 +88,7 @@ def plotNodeRewards(array):
 
 def plotAvgProbabilites(array):
     plot = plt.figure();
-    plt.title("Average probability of node chossing");
+    plt.title("Average probability of node choosing");
     plt.xlabel("SLA Iterations");
     plt.ylabel("Avg Probability");
     for i in range(len(array)):
@@ -98,8 +100,13 @@ def plotAvgProbabilites(array):
     
     return plot;
 
-def plotNodeRewardCharacteristic(array, element):
-    toplot = array.transpose();
+def plotNodeRewardCharacteristic(array, element, trans = False):
+    
+    if trans:
+        toplot = array;
+    else:
+        toplot = array.transpose();
+    
     plot = plt.figure()
     plt.title("The " + element + " of each node");
     for i in range(len(toplot)):
@@ -108,7 +115,7 @@ def plotNodeRewardCharacteristic(array, element):
         
         
     plt.legend();
-    plt.xlabel("SLA Iterations(x100)");
+    plt.xlabel("SLA Iterations");
     plt.ylabel(element);
     plt.show();
     
@@ -165,3 +172,52 @@ def plotReps(list2d):
     plt.legend();
     plt.show();
     return plot
+
+
+def plotMonteCarlo(toPlot, i):
+    plot = plt.figure();
+    plt.title("Average Reward using Monte Carlo Smoothing after " + str(i) + " executions");
+    plt.xlabel("SLA Iterations");
+    plt.ylabel("Avg Reward");
+    plt.plot(range(len(toPlot)), toPlot);
+    plt.show();
+    
+    return plot;
+
+def plotMonteCarloTotal(toPlot, i):
+    plot = plt.figure();
+    plt.title("Total Reward using Monte Carlo Smoothing after " + str(i) + " timeslots");
+    plt.xlabel("SLA Iterations");
+    plt.ylabel("Total Reward");
+    plt.plot(range(len(toPlot)), toPlot);
+    plt.show();
+    
+    return plot;
+
+
+def barAvgRep(list2d):
+    plot = plt.figure();
+    values = [];
+    
+    plt.title("Average Reputation of Nodes")
+    plt.xlabel("Node");
+    plt.xticks(range(constants.NODES))
+    plt.ylabel("Reputation");
+    for i in range(len(list2d)):
+        values.append(mean(list2d[i]));
+    
+    plt.bar(range(constants.NODES), values);
+    
+    plt.show();
+    return plot;
+
+def plotAggrRewards(array):
+    plot = plt.figure();
+    plt.title("Total Reward given over Time");
+    plt.xlabel("Timeslot");
+    plt.ylabel("Reward");
+    yhat = savgol_filter(array, 51, 3)
+    
+    plt.plot(range(len(array)), array);
+    plt.plot(range(len(array)), yhat, color = 'red')
+    return plot;

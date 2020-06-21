@@ -3,41 +3,68 @@ import constants
 import SLA
 import RBTS
 import BayesianBelief
-    
+import plotFunctions    
+import MonteCarloSmoothing
+import numpy as np
+
 if __name__ == "__main__":
     distances = compFunctions.generateDistances(10, 400, constants.NODES, constants.USERS);
     nodes, users = compFunctions.initalize(constants.NODES, constants.USERS);
+    accRBTSScores = np.zeros(constants.USERS);
+    allRounds = [];
+    
+    puks = compFunctions.computePUK(distances, constants.NODES, constants.THETA1);
+    guks = compFunctions.computeGUK(distances, constants.THETA2);
+    # plotFunctions.plotNodeCharacteristics(nodes)
     
     print("Initial Reputations");
     for node in nodes:
         print(node.__dict__)
-    puks = compFunctions.computePUK(distances, constants.NODES, constants.THETA1);
-    guks = compFunctions.computeGUK(distances, constants.THETA2);
-    currentNodes = compFunctions.firstRound(constants.NODES, constants.USERS)
-
+        
+    
+    #noes, yeses, reps= [[] for i in range(constants.NODES)], [[] for i in range(constants.NODES)], [[] for i in range(constants.NODES)];
     i = 0;
-    while i < 5:
+    while i < 1000:
+        """for j in range(constants.NODES):
+            noes[j].append(nodes[j].noNo);
+            yeses[j].append(nodes[j].noYes);
+            reps[j].append(nodes[j].reputation);
+        """
         
-        ruks= compFunctions.computeRUK(nodes, puks, guks, currentNodes, constants.NODES, constants.USERS);
-        fuks = compFunctions.computeFUK(nodes, users, currentNodes, constants.NODES, constants.USERS);
-
-        userTimeOverheads = compFunctions.computeTimeOverheads(users, ruks, fuks);
-        userEnergyOverheads = compFunctions.computeEnergyOverheads(users, constants.USERS, currentNodes, puks, ruks)
+        currentNodes = compFunctions.firstRound(constants.NODES, constants.USERS)
         
-        sla = SLA.SLA(nodes, users, currentNodes, userEnergyOverheads, userTimeOverheads, fuks);
-        currentNodes, probabilities = sla.newRound2();
-            
-            
+        sla = SLA.SLA(nodes, users, currentNodes, puks, guks, accRBTSScores);
+        currentNodes, probabilities, avgRewards = sla.newRound2();
+        
+        #plotFunctions.plotAvgReward(avgRewards)
+        allRounds.append(avgRewards)
+        
         rbts = RBTS.RBTS(nodes, users, currentNodes, probabilities);
-        answers = rbts.finalAnswers()
+        answers, RBTSScores = rbts.finalAnswers()
+        #accRBTSScores += RBTSScores;
             
-        believes = BayesianBelief.BayesianBelief(nodes, answers);
-        believes.updateReputations();
-        i += 1;
+        """believes = BayesianBelief.BayesianBelief(nodes, answers);
+        believes.updateReputations();"""
+        
         for user in users:
-            user.renew();
+            user.initProbs(constants.NODES);
+        
+        i += 1;
+        if i%10 ==0:
+            print(i)
+    smoother = MonteCarloSmoothing.MonteCarloSmoothing();
+    allSmoothed = smoother.smooth(allRounds);
+    plotFunctions.plotMonteCarlo(allSmoothed, i);
+    
+    
     
     print("New Reputations")
     for node in nodes:
         print(node.__dict__);
         
+        
+    """plotFunctions.pltStep2dlist(noes, "Number of No Answers");
+    plotFunctions.pltStep2dlist(yeses, "Number of Yes Answers");
+    plotFunctions.plotReps(reps);
+    plotFunctions.barAvgRep(reps);
+    #lotFunctions.plotAggrRewards(rounds); """ 

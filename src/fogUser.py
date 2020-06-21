@@ -8,7 +8,7 @@ class fogUser:
         self.ongoingTask = (0, 0, 0);
         self.probVector = np.ones(k);
         self.noNodes = k;
-        self.eu = random.randint(100, 10000)
+        self.eu = random.randint(200, 20000)
         self.initTask();
         self.initProbs(k);
         
@@ -26,7 +26,7 @@ class fogUser:
         
     def hasDecided(self):
         # used during SLA iteration. If the user will choose a node with probability >0.95 we announce success
-        return any(self.probVector > 0.95);
+        return any(self.probVector >= 0.95);
     
     def giveSelection(self):
         # return the node with the biggest probability
@@ -34,14 +34,14 @@ class fogUser:
     
     def chooseNode(self):
         # using the generalized roulette game we select a node to associate with during the iteration
-        temp = random.random();
+        """"temp = random.random();
         i = 0;
         
         while temp > self.probVector[i]:
             temp -= self.probVector[i];
-            i += 1;
+            i += 1;"""
             
-        return i;
+        return np.random.choice(range(self.noNodes), 1, p = self.probVector)[0]
     
     def renew(self):
         # reinitializing both the probability vector and the task for a new round 
